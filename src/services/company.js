@@ -4,12 +4,32 @@ const updateCompanyCeo = async (ceoName, companyName) => {
     const update = await Companies.update({ CEO: ceoName }, { where: { compName: companyName } });
     return update;
 };
+// const pushCompanyData = async () => {
+//     const 
+//     const data = await Companies.bulkCreate(
+//            compId: 
+//     );
+// };
 const getCSV = async (url) => {
     const promise = axios.get(`${url}`);
     const csv = await promise.then((response) => csvJSON(response.data));
+    const data = await collatedData(csv);
+    console.log(data);
+    for (let i = 0; i < csv.length; i++) {
+        await Companies.create({
+            compId: data[i].company_id,
+            compName: data[i].name,
+            compSector: 'Automobile',
+            CEO: data[i].ceo,
+            score: Math.floor(data[i].score),
+            createdAt: new Date(),
+            updatedAt: new Date()
 
+        });
 
-    return collatedData(csv);
+    }
+
+    return;
 
 };
 const getCompanyById = async (id) => {
@@ -54,6 +74,7 @@ const getCompanyByRank = async (compSec) => {
     }
     return data;
 };
+
 
 
 const collatedData = async (csv) => {
