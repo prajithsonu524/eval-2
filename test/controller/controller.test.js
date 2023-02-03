@@ -54,3 +54,41 @@ describe('GET companies with scores calculated', () => {
     });
 
 });
+describe('POST update the ceo name', () => {
+    it('should return a message of successful updation', async () => {
+        const mockValue = {
+            message: 'updated'
+        };
+        jest.spyOn(Services, 'updateCompanyCeo').mockResolvedValue(mockValue);
+        const req = {
+            body: {
+                ceoName: 'Henry Rempel',
+                companyName: 'Volkswagen'
+            },
+        };
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        };
+        await Controller.updateCompanyCeo(req, res);
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(mockValue);
+    });
+    it('should return a message of not found', async () => {
+
+        jest.spyOn(Services, 'updateCompanyCeo').mockResolvedValue(0);
+        const req = {
+            body: {
+                ceoName: 'Henry Rempel',
+                companyName: 'Volkswagen'
+            },
+        };
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        };
+        await Controller.updateCompanyCeo(req, res);
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: 'The company with the given ID was not found.' });
+    });
+});
