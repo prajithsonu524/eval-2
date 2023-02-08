@@ -4,7 +4,7 @@ const Services = require('../services/company');
 const getCompanyDetails = async (req, res) => {
     const companies = await Services.getCSV(req.body.urlLink);
     if (!companies) return res.status(401).json({ message: 'The company data was not inserted in the database ' });
-    res.status(200).json(companies);
+    res.status(200).send(companies);
 
 
 };
@@ -13,7 +13,7 @@ const getCompanyByRank = async (req, res) => {
 
 
     const companySector = await Services.getCompanyByRank();
-    res.status(200).json(companySector);
+    res.status(200).send(companySector);
 
 
 };

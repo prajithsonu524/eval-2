@@ -21,10 +21,26 @@ describe('POST url and get back the data with scores', () => {
             status: jest.fn().mockReturnThis(),
             send: jest.fn()
         };
-        await Controller.getCSV(req, res);
+        await Controller.getCompanyDetails(req, res);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.send).toHaveBeenCalledWith(mockValue);
 
+    });
+    it('should return a message of not a sucessful insertion in db', async () => {
+
+        jest.spyOn(Services, 'getCSV').mockResolvedValue(0);
+        const req = {
+            body: {
+                urlLink: 'http://localhost:3000/company/api/save',
+            },
+        };
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        };
+        await Controller.getCompanyDetails(req, res);
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: 'The company data was not inserted in the database ' });
     });
 });
 describe('GET companies with scores calculated', () => {
@@ -33,7 +49,8 @@ describe('GET companies with scores calculated', () => {
             company_id: '95b5a067-808a-44a9-a490-b4ef8a045f61',
             name: 'Volkswagen',
             ceo: 'Henry Rempel',
-            score: '15.78'
+            score: '15.78',
+            rank: 1
         },
 
         ];
@@ -47,7 +64,7 @@ describe('GET companies with scores calculated', () => {
             status: jest.fn().mockReturnThis(),
             send: jest.fn()
         };
-        await Controller.getCompanyBySector(req, res);
+        await Controller.getCompanyByRank(req, res);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.send).toHaveBeenCalledWith(mockValue);
 
