@@ -1,27 +1,19 @@
 
 const Services = require('../services/company');
 
-const getCSV = async (req, res) => {
-    const data = await Services.getCSV(req.body.urlLink);
-
-    res.status(200).send(data);
+const getCompanyDetails = async (req, res) => {
+    const companies = await Services.getCSV(req.body.urlLink);
+    if (!companies) return res.status(401).json({ message: 'The company data was not inserted in the database ' });
+    res.status(200).json(companies);
 
 
 };
-// const getCompanyById = async (req, res) => {
-//     const id = req.params.id;
-//     console.log(id);
 
-//     const companyDetails = await Services.getCompanyById(id);
-//     res.send(companyDetails);
+const getCompanyByRank = async (req, res) => {
 
 
-// };
-const getCompanyBySector = async (req, res) => {
-    const sectorName = req.query.name;
-
-    const companySector = await Services.getCompanyByRank(sectorName);
-    res.status(200).send(companySector);
+    const companySector = await Services.getCompanyByRank();
+    res.status(200).json(companySector);
 
 
 };
@@ -34,9 +26,9 @@ const updateCompanyCeo = async (req, res) => {
 };
 
 module.exports = {
-    getCSV,
+    getCompanyDetails,
 
-    getCompanyBySector,
+    getCompanyByRank,
     updateCompanyCeo,
 
 };

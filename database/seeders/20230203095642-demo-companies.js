@@ -9,10 +9,18 @@ module.exports = {
 
     await queryInterface.bulkInsert('Companies', [{
       compId: '8e4efer-234k234-324d-4234',
-      compName: 'Aarya Motors',
+      compName: 'Prajith Motors',
       compSector: 'Automobile',
-      CEO: 'Prajith Aarya',
+      CEO: 'Prajith',
       score: 33.33,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }, {
+      compId: 'f4efer-23434-32234d-442344',
+      compName: 'Aarya Technologies',
+      compSector: 'Software',
+      CEO: 'Aarya',
+      score: 67.45,
       createdAt: new Date(),
       updatedAt: new Date()
     }]);

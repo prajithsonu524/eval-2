@@ -4,12 +4,7 @@ const updateCompanyCeo = async (ceoName, companyName) => {
     const update = await Companies.update({ CEO: ceoName }, { where: { compName: companyName } });
     return update;
 };
-// const pushCompanyData = async () => {
-//     const 
-//     const data = await Companies.bulkCreate(
-//            compId: 
-//     );
-// };
+
 const getCSV = async (url) => {
     const promise = axios.get(`${url}`);
     const csv = await promise.then((response) => csvJSON(response.data));
@@ -19,7 +14,7 @@ const getCSV = async (url) => {
         await Companies.create({
             compId: data[i].company_id,
             compName: data[i].name,
-            compSector: 'Automobile',
+            compSector: data[i].sector,
             CEO: data[i].ceo,
             score: Math.floor(data[i].score),
             createdAt: new Date(),
@@ -28,8 +23,12 @@ const getCSV = async (url) => {
         });
 
     }
+    const companies = await Companies.findAll({
+        attributes: ['compId', 'compName', 'CEO', 'compSector'],
+    }
+    );
 
-    return;
+    return companies;
 
 };
 const getCompanyById = async (id) => {
@@ -44,25 +43,12 @@ const getCompanyBySector = async (sectorName) => {
     const companySector = await promise.then((response) => response.data);
     return companySector;
 };
-const getCompanyByRank = async (compSec) => {
-    const company_sector_details = await getCompanyBySector(compSec);
-    const data = [];
-    for (let i = 0; i < company_sector_details.length; i++) {
-        const company_id = company_sector_details[i].companyId;
-        // const company_sector = csv[i].company_sector;
-        const company_details = await getCompanyById(company_id);
+const getCompanyByRank = async () => {
 
-        const index = company_sector_details.findIndex(company => company.companyId == company_id);
-        const obj = {
-            id: company_id,
-            name: company_details.name,
-            ceo: company_details.ceo,
-            score: score(index, company_sector_details).toFixed(2),
+    const data = await Companies.findAll({
+        attributes: ['compId', 'compName', 'score'],
+    });
 
-
-        };
-        data.push(obj);
-    }
     data.sort((a, b) => b.score - a.score);
     var rank = 1;
     for (var i = 0; i < data.length; i++) {
@@ -70,11 +56,19 @@ const getCompanyByRank = async (compSec) => {
         if (i > 0 && data[i].score < data[i - 1].score) {
             rank++;
         }
-        data[i].rank = rank;
+        data[i].dataValues.rank = rank;
     }
+
     return data;
 };
 
+module.exports = {
+    getCSV,
+    getCompanyById,
+    getCompanyBySector,
+    getCompanyByRank,
+    updateCompanyCeo,
+};
 
 
 const collatedData = async (csv) => {
@@ -91,7 +85,7 @@ const collatedData = async (csv) => {
             company_id,
 
             name: company_details.name,
-
+            sector: company_details.sector,
             ceo: company_details.ceo,
             score: score(index, company_sector_details).toFixed(2),
         };
@@ -101,19 +95,11 @@ const collatedData = async (csv) => {
 };
 
 
-module.exports = {
-    getCSV,
-    getCompanyById,
-    getCompanyBySector,
-    getCompanyByRank,
-    updateCompanyCeo,
-};
+
 const csvJSON = (csv) => {
 
     var lines = csv.split('\n');
-
     var result = [];
-
     var headers = lines[0].split(',');
 
     for (var i = 1; i < lines.length; i++) {

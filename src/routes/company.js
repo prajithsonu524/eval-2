@@ -1,9 +1,9 @@
 const router = require('express').Router();
 
-const { getCSV, getCompanyBySector, updateCompanyCeo } = require('../controller/company');
-router.post('/api/save', getCSV);
+const { getCompanyDetails, getCompanyByRank, updateCompanyCeo } = require('../controller/company');
+router.post('/api/save', getCompanyDetails);
 
-router.get('/api/companies', getCompanyBySector);
+router.get('/api/companies', getCompanyByRank);
 router.post('/api/update', updateCompanyCeo);
 
 
